@@ -1,0 +1,203 @@
+/*动画、气泡框*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+/* ---- Pet Container ---- */
+#pet-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Pet Body (zoom target — sprite + bubble) ---- */
+#pet-body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  transition: transform 0.15s ease;
+}
+
+/* ---- Pet Sprite ---- */
+#pet-sprite {
+  width: 128px;
+  height: 128px;
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  transition: transform 0.15s ease;
+}
+
+/* ---- Pet Hit (pixel-precise interaction zone) ---- */
+#pet-hit {
+  position: absolute;
+  width: 128px;   /* matches sprite 100% background-size */
+  height: 128px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  z-index: 5;
+}
+
+#pet-hit:active {
+  cursor: grabbing;
+}
+
+/* ---- State-based sprites (fallback emoji until images are added) ---- */
+/* Idle / Touch / Nap background-images are driven by JS animation loop */
+
+#pet-sprite.state-nap {
+  /* bg-image driven by JS (nap frames loop) */
+  animation: breathe 2s ease-in-out infinite;
+}
+
+/* ---- Fallback emoji display ---- */
+#pet-sprite::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 96px;
+  pointer-events: none;
+}
+
+/*#pet-sprite.state-idle::before  { content: "🐱"; }
+#pet-sprite.state-touch::before { content: "🥰"; }
+#pet-sprite.state-nap::before   { content: "💤"; }*/
+
+#pet-sprite.state-idle[data-has-image="true"]::before,
+#pet-sprite.state-touch[data-has-image="true"]::before,
+#pet-sprite.state-nap[data-has-image="true"]::before {
+  content: none;
+}
+
+/*气泡框 — 只改 font-size，其余自适应*/
+#speech-bubble {
+  position: absolute;
+  /* top / left set dynamically by JS based on character position */
+  background: rgba(255, 255, 255, 0.92);
+  color: #333;
+  font-size: 14px;                  /*← 只改这个，全部等比缩放*/
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  padding: 0.4em 0.8em;
+  border-radius: 0.6em;
+  max-width: 12em;
+  text-align: center;
+  cursor: grab;
+  box-shadow: 0 0.2em 0.8em rgba(0, 0, 0, 0.15);
+  z-index: 15;
+  animation: fadeIn 0.2s ease-out;
+}
+
+#speech-bubble:active {
+  cursor: grabbing;
+}
+
+/*气泡框尾巴 — em 自适应*/
+#speech-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -0.4em;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 0.4em solid transparent;
+  border-right: 0.4em solid transparent;
+  border-top: 0.4em solid rgba(255, 255, 255, 0.92);
+}
+
+#speech-bubble.hidden {
+  display: none;
+}
+
+/*右键菜单*/
+#context-menu {
+  position: absolute;
+  /* top / left / transform set dynamically by JS for screen-boundary awareness */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 6px 0;
+  min-width: 130px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+  z-index: 20;
+  animation: fadeIn 0.15s ease-out;
+}
+
+#context-menu.hidden {
+  display: none;
+}
+
+.menu-item {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.menu-item:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.menu-separator {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 4px 10px;
+}
+
+/*动画*/
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  40%      { transform: translateY(-20px); }
+  60%      { transform: translateY(-8px); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.01); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-10px); }
+  40%      { transform: translateX(10px); }
+  60%      { transform: translateX(-8px); }
+  80%      { transform: translateX(6px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25%      { transform: translateX(-2px) rotate(-1.5deg); }
+  75%      { transform: translateX(2px) rotate(1.5deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

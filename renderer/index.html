@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desktop Pet</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="pet-container">
+    <!-- Zoom wrapper — pet scales with zoom -->
+    <div id="pet-body">
+      <!-- Pet sprite -->
+      <div id="pet-sprite" class="state-idle"></div>
+
+      <!-- Hit target — matches actual image area for pixel-precise interaction -->
+      <div id="pet-hit"></div>
+    </div>
+
+    <!-- Speech bubble — outside zoom, independently draggable -->
+    <div id="speech-bubble" class="hidden">
+      <span id="bubble-text"></span>
+    </div>
+
+    <!-- Context menu — NOT affected by zoom -->
+    <div id="context-menu" class="hidden">
+      <div class="menu-item" data-action="idle">😊 待机</div>
+      <div class="menu-item" data-action="speak">💬 对话</div>
+      <div class="menu-separator"></div>
+      <div class="menu-item" data-action="quit">👋 退出</div>
+    </div>
+  </div>
+
+  <script src="pet.js"></script>
+</body>
+</html>
